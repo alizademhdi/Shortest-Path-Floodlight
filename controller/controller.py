@@ -87,38 +87,38 @@ class Network:
             "name": 'flow1',
             "cookie":"0",
             "priority":"32768",
-            "in_port": in_port,
+            "in_port": str(in_port),
             "eth_type": "0x0800",
-            "ipv6_src": self.hosts[src]['ip'],
-            "ipv6_dst": self.hosts[dest]['ip'],
             "eth_src": self.hosts[src]['mac'],
             "eth_dst": self.hosts[dest]['mac'],
-            "active":"true",
-            "actions":"output=" + out_port
+            "active": "true",
+            "actions": f'output={str(out_port)}'
         }
 
         jsonData = json.dumps(flow)
+        print(jsonData)
         headers = {'Content-Type': 'application/json'}
-        requests.post(URL, data=jsonData, headers=headers)
+        res = requests.post(URL, data=jsonData, headers=headers)
+        print(res.content)
 
         flow = {
             "switch": node,
-            "name": 'flow2',
-            "cookie":"0",
-            "priority":"32768",
-            "in_port": out_port,
+            "name": "flow2",
+            "cookie": "0",
+            "priority": "32768",
+            "in_port": str(out_port),
             "eth_type": "0x0800",
-            "ipv6_src": self.hosts[dest]['ip'],
-            "ipv6_dst": self.hosts[src]['ip'],
             "eth_src": self.hosts[dest]['mac'],
             "eth_dst": self.hosts[src]['mac'],
-            "active":"true",
-            "actions":"output=" + in_port
+            "active": "true",
+            "actions":f'output={in_port}'
         }
 
         jsonData = json.dumps(flow)
+        print(jsonData)
         headers = {'Content-Type': 'application/json'}
         requests.post(URL, data=jsonData, headers=headers)
+        print(res.content)
 
     def update_switches(self, path):
         first_switch = path[0]
@@ -130,5 +130,6 @@ class Network:
         self.add_flow(first_switch, src, dest, 1, self.ports[first_switch][path[1]])
         self.add_flow(first_switch, src, dest, self.ports[last_switch][path[-2]], 1)
 
-        for i, switch in enumerate(path[1,-1]):
+        for i in range(1, len(path)-1):
+            switch = path[i]
             self.add_flow(first_switch, src, dest, self.ports[switch][path[i-1]], self.ports[switch][path[i+1]])
