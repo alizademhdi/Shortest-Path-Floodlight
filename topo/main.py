@@ -22,7 +22,6 @@ if __name__ == '__main__':
         cleanup=True,
         autoStaticArp=True
     )
-    net.hosts[0].setIP('10.0.0.1')
     setLogLevel('info')
     net.start()
     CLI(net)
