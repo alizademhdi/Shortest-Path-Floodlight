@@ -1,4 +1,3 @@
-import networkx as nx
 import requests
 import json
 import heapq
